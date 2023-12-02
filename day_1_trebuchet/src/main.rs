@@ -19,17 +19,22 @@ fn main() {
         println!("\nLine: {line}");
 
         let characters_vector: Vec<char> = line.chars().collect();
-        let mut digit_string = String::default();
+        let mut first_digit = -1;
+        let mut last_digit = -1;
 
         // for all the characters in the line
-        for index in 0..line.len() {
+        for index in 0..characters_vector.len() {
             // check if a digit is starting at this character
-            let digit_char = get_digit_at_index(&characters_vector, index);
+            let digit = get_digit_at_index(&characters_vector, index);
             
-            match digit_char {
-                Some(digit_char) => {
-                    // if it is, add that digit to a string
-                    digit_string.push(digit_char);
+            match digit {
+                Some(digit) => {
+                    // if it is, store it
+                    if first_digit < 0 {
+                        first_digit = digit;
+                    }
+                    
+                    last_digit = digit
                 }
                 None => {
                     continue;
@@ -37,31 +42,10 @@ fn main() {
             }
         }
 
-        println!("  Parsed into {digit_string}");
-
-        // convert the line to a char iterator
-        // we filter out every character that is not numeric
-        // collect the digits into a vector to allow indexing
-        let digits_vector: Vec<char> = digit_string
-            .chars()
-            .collect();
-
-        if digits_vector.is_empty() {
-            println!("  Line has no digits");
-            continue;
-        }
-
-        // copy the first and last digits from the vector
-        let first_digit = digits_vector.first().unwrap().clone();
-        let last_digit = digits_vector.last().unwrap().clone();
-        
-        // put the digits in a new string
-        let mut first_and_last_digit: String = Default::default();
-        first_and_last_digit.push(first_digit);
-        first_and_last_digit.push(last_digit);
+        println!("  Found first digit {first_digit} and last digit {last_digit}");
 
         // parse the new string as an i32
-        let calibration_values = first_and_last_digit.parse::<i32>().unwrap();
+        let calibration_values = (first_digit * 10) + last_digit;
         println!("  Calibration values: {calibration_values}");
 
         // add the parsed i32 to the sum
@@ -71,30 +55,30 @@ fn main() {
     println!("Sum: {sum}");
 }
 
-fn get_digit_at_index(characters: &Vec<char>, start_index: usize) -> Option<char> {
+fn get_digit_at_index(characters: &Vec<char>, start_index: usize) -> Option<i32> {
     
     // this is very inefficient, but I decided to use the same function
     // for both digits and aliases...
     // this way, order is easily maintained
     let digital_aliases = [
-        ("1", '1'),
-        ("2", '2'),
-        ("3", '3'),
-        ("4", '4'),
-        ("5", '5'),
-        ("6", '6'),
-        ("7", '7'),
-        ("8", '8'),
-        ("9", '9'),
-        ("one", '1'),
-        ("two", '2'),
-        ("three", '3'),
-        ("four", '4'),
-        ("five", '5'),
-        ("six", '6'),
-        ("seven", '7'),
-        ("eight", '8'),
-        ("nine", '9')
+        ("1", 1),
+        ("2", 2),
+        ("3", 3),
+        ("4", 4),
+        ("5", 5),
+        ("6", 6),
+        ("7", 7),
+        ("8", 8),
+        ("9", 9),
+        ("one", 1),
+        ("two", 2),
+        ("three", 3),
+        ("four", 4),
+        ("five", 5),
+        ("six", 6),
+        ("seven", 7),
+        ("eight", 8),
+        ("nine", 9)
     ];
 
     for alias in digital_aliases {
@@ -105,10 +89,10 @@ fn get_digit_at_index(characters: &Vec<char>, start_index: usize) -> Option<char
             continue;
         }
 
-        let max_index = start_index + alias.0.len();
+        let end_index = start_index + alias.0.len();
 
         // get a slice of the characters to try matching
-        let slice = &characters[start_index..max_index];
+        let slice = &characters[start_index..end_index];
         let alias_vec: Vec<char> = alias.0.chars().collect();
 
         let mut alias_matches = true;
