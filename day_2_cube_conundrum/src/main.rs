@@ -23,15 +23,19 @@ impl Game {
 
         true
     }
+
+    fn get_power(&self) -> u32 {
+        let color_counts = &self.color_counts;
+
+        let red_count = color_counts.get("red").unwrap();
+        let green_count = color_counts.get("green").unwrap();
+        let blue_count = color_counts.get("blue").unwrap();
+
+        red_count * green_count * blue_count
+    }
 }
 
 fn main() {
-    let _result = part_1();
-
-    //println!("{result}");
-}
-
-fn part_1() {
     const INPUT_PATH: &str = "res/input.txt";
     let input: String = fs::read_to_string(INPUT_PATH)
         .expect("Fail");
@@ -91,14 +95,21 @@ fn part_1() {
             game.color_counts.get("blue").unwrap()
         );
 
-        if game.is_possible_with_counts(12, 13, 14) {
-            println!("Game {} is Possible!", game.id);
-            sum += game.id;
-            println!("Sum after adding: {}", sum);
-        }
-        else {
-            println!("Game {} is NOT Possible!", game.id);
-        }
+        // Part 1
+        // if game.is_possible_with_counts(12, 13, 14) {
+        //     println!("Game {} is Possible!", game.id);
+        //     sum += game.id;
+        //     println!("Sum after adding: {}", sum);
+        // }
+        // else {
+        //     println!("Game {} is NOT Possible!", game.id);
+        // }
+
+        // Part 2
+        let power = game.get_power();
+        println!("Game {} Power: {power}", game.id);
+        sum += power;
+        println!("Sum after adding: {}", sum);
     }
 
     println!("\nSum: {sum}");
